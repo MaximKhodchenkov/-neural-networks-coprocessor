@@ -1,16 +1,19 @@
-module sigmoid (
-  input signed [31:0] x,
-  output reg signed [31:0] y
+module sigmoid(
+  input shortreal     x,
+  output logic [31:0] y
 );
 
-  parameter EXPONENT = 17; // Параметр для определения экспоненты
-
-  // Рассчитываем экспоненту
-  wire signed [31:0] exp = $exp(x >> EXPONENT);
-
-  // Рассчитываем значение сигмоидальной функции
-  always @ (*) begin
-    y = (exp << EXPONENT) / (exp << EXPONENT + (1 << EXPONENT));
-  end
+  // Коэффициенты сигмоидной функции
+  parameter real a = 1.0;
+  parameter real b = 0.0;
+  
+  // Преобразование входного числа в тип shortreal
+  shortreal num_real = x;
+  
+  // Вычисление сигмоидной функции
+  shortreal sigmoid_real = 1.0 / (1.0 + exp(-(a*num_real + b)));
+  
+  // Преобразование результата в тип logic
+  y = sigmoid_real;
 
 endmodule

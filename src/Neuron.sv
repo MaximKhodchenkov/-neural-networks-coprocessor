@@ -73,18 +73,15 @@ logic [DATA_WIDTH - 1:0] mem_W [256]; // memory of weights
 logic [DATA_WIDTH - 1:0] data_from_mem_W;
 assign data_from_mem_W = mem_W[addr_rd_mem_W];
 
-logic signed [31:0] operand_1, operand_2; 
-logic signed [31:0] result_mult;
-assign operand_1 = $signed(rx_tdata);
-assign operand_2 = $signed(data_from_mem_W);
+logic [31:0] operand_1, operand_2, sigmoid_y; 
+shortreal result_mult;
+assign operand_1 = rx_tdata;
+assign operand_2 = data_from_mem_W;
 
-sig_fract_mult (
-  .POINT_POSITION (POINT_POSITION    ) 
-)
-sig_fract_mult_inst(
-  .a              ($signed(operand_1)),
-  .b              ($signed(operand_2)),
-  .result         (result_mult       )
+shortreal_multiplier shortreal_multiplier_inst(
+  .a              (operand_1),
+  .b              (operand_2),
+  .result         (result_mult)
   )
 
 // FSM Data processing -----------------------------------------------
@@ -97,8 +94,8 @@ always_comb begin
   else     current_state = next_state;
 end
 
-logic signed [DATA_WIDTH:0] acc_sum     = 0;
-logic signed [DATA_WIDTH:0] reg_acc_sum = 0;
+shortreal [DATA_WIDTH:0] acc_sum     = 0;
+shortreal [DATA_WIDTH:0] reg_acc_sum = 0;
 
 always_ff @(clk) begin
   if (rst) acc_sum <= 0;
