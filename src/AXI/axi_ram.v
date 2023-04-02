@@ -166,13 +166,7 @@ assign s_axi_rvalid = PIPELINE_OUTPUT ? s_axi_rvalid_pipe_reg : s_axi_rvalid_reg
 integer i, j;
 
 initial begin
-    // two nested loops for smaller number of iterations per loop
-    // workaround for synthesizer complaints about large loop counts
-    for (i = 0; i < 2**VALID_ADDR_WIDTH; i = i + 2**(VALID_ADDR_WIDTH/2)) begin
-        for (j = i; j < i + 2**(VALID_ADDR_WIDTH/2); j = j + 1) begin
-            mem[j] = 0;
-        end
-    end
+  $readmemh("weights.txt", mem);
 end
 
 always @* begin
